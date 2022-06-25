@@ -2162,7 +2162,7 @@ int main(int argc, char *argv[])
 	for(i=0; i<MAX_CHAN; i++)
 	{
 		if (chan[i].prn>0)
-			fprintf(stderr, "%02d %6.1f %5.1f %11.1f %5.1f\n", chan[i].prn, 
+			fprintf(stderr, "%02d %6.1f %5.1f %11.1f %5.1f\n", chan[i].prn,
 				chan[i].azel[0]*R2D, chan[i].azel[1]*R2D, chan[i].rho0.d, chan[i].rho0.iono_delay);
 	}
 
@@ -2213,8 +2213,9 @@ int main(int argc, char *argv[])
 				ibs = (int)((90.0-rho.azel[1]*R2D)/5.0); // covert elevation to boresight
 				ant_gain = ant_pat[ibs];
 
-				// Signal gain
+				// Signal gain //MK-MOD
 				gain[i] = (int)(path_loss*ant_gain*128.0); // scaled by 2^7
+				//gain[i] = (int)(path_loss*2*128.0); // scaled by 2^7
 			}
 		}
 
