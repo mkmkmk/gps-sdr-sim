@@ -2101,6 +2101,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
+
 	if (data_format==SC08)
 	{
 		iq8_buff = calloc(2*iq_buff_size, 1);
