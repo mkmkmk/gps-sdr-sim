@@ -2049,6 +2049,7 @@ int main(int argc, char *argv[])
 		t0 = tmin;
 	}
 
+	fprintf(stderr, "I_FREQ = %d Hz (MK-MOD!)\n", I_FREQ);
 	fprintf(stderr, "Start time = %4d/%02d/%02d,%02d:%02d:%02.0f (%d:%.0f)\n", 
 		t0.y, t0.m, t0.d, t0.hh, t0.mm, t0.sec, g0.week, g0.sec);
 	fprintf(stderr, "Duration = %.1f [sec]\n", ((double)numd)/UPD_FREQ_MK);
@@ -2196,7 +2197,7 @@ int main(int argc, char *argv[])
 				// Update code phase and data bit counters
 				computeCodePhase(&chan[i], rho, 1.0 / UPD_FREQ_MK);
 #ifndef FLOAT_CARR_PHASE
-				chan[i].carr_phasestep = (int)round(512.0 * 65536.0 * chan[i].f_carr * delt);
+				chan[i].carr_phasestep = (int)round(512.0 * 65536.0 * (chan[i].f_carr + I_FREQ) * delt);
 #endif
 				// Path loss
 				path_loss = 20200000.0/rho.d;
@@ -2265,7 +2266,7 @@ int main(int argc, char *argv[])
 
 					// Update carrier phase
 #ifdef FLOAT_CARR_PHASE
-					chan[i].carr_phase += chan[i].f_carr * delt;
+					chan[i].carr_phase += (chan[i].f_carr + I_FREQ) * delt;
 
 					if (chan[i].carr_phase >= 1.0)
 						chan[i].carr_phase -= 1.0;

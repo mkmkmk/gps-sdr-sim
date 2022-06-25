@@ -65,6 +65,15 @@
 #define SPEED_OF_LIGHT 2.99792458e8
 #define LAMBDA_L1 0.190293672798365
 
+// ustawianie czestotliwości pośredniej
+/*
+#define I_FREQ (50000)
+#define I_FREQ (1023000/4)
+#define I_FREQ (250000)
+#define I_FREQ (0)
+#define I_FREQ (250000)
+*/
+#define I_FREQ (0)
 
 // częstotliwość uaktualniania, chcę zmienić z domyślnych 10Hz na więcej
 #define UPD_FREQ_MK (1000)
