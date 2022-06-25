@@ -2054,6 +2054,7 @@ int main(int argc, char *argv[])
 		t0 = tmin;
 	}
 
+	fprintf(stderr, "F_SAMPLE = %d Hz \n", (int)samp_freq);
 	fprintf(stderr, "I_FREQ = %d Hz (MK-MOD!)\n", I_FREQ);
 	fprintf(stderr, "Start time = %4d/%02d/%02d,%02d:%02d:%02.0f (%d:%.0f)\n", 
 		t0.y, t0.m, t0.d, t0.hh, t0.mm, t0.sec, g0.week, g0.sec);
