@@ -2189,6 +2189,8 @@ int main(int argc, char *argv[])
 	// Update receiver time
 	grx = incGpsTime(grx, 1.0 / UPD_FREQ_MK);
 
+	//todo ?????
+
 	for (iumd=1; iumd<numd; iumd++)
 	{
 		for (i=0; i<MAX_CHAN; i++)
@@ -2356,14 +2358,14 @@ int main(int argc, char *argv[])
 		{
 			for (isamp=0; isamp<2*iq_buff_size; isamp++)
 				iq8_buff[isamp] = iq_buff[isamp]>>4; // 12-bit bladeRF -> 8-bit HackRF
-            if (0)
-                printf(" | iq = (%d, %d)                ", iq8_buff[0], iq8_buff[1]);
+			if (0)
+				printf(" | iq = (%d, %d)                ", iq8_buff[0], iq8_buff[1]);
 			fwrite(iq8_buff, 1, 2*iq_buff_size, fp);
 		} 
 		else // data_format==SC16
 		{
-		    if (0)
-		        printf(" | iq = (%d, %d)                ", (int)(*(short*)(iq_buff+0)), (int)(*(short*)(iq_buff+2)));
+			if (0)
+				printf(" | iq = (%d, %d)                ", (int)(*(short*)(iq_buff+0)), (int)(*(short*)(iq_buff+2)));
 			fwrite(iq_buff, 2, 2*iq_buff_size, fp);
 		}
 
@@ -2429,8 +2431,8 @@ int main(int argc, char *argv[])
 		grx = incGpsTime(grx, 1.0 / UPD_FREQ_MK);
 
 		// Update time counter
-        if (1)
-            fprintf(stderr, "\rTime into run = %4.1f", subGpsTime(grx, g0));
+		if (1)
+			fprintf(stderr, "\rTime into run = %4.1f", subGpsTime(grx, g0));
 		fflush(stdout);
 	}
 
