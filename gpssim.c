@@ -870,6 +870,8 @@ int readRinexNavAll(ephem_t eph[][MAX_SAT], ionoutc_t *ionoutc, const char *fnam
 			ionoutc->alpha3 = atof(tmp);
 
 			flags |= 0x1;
+			if (0)
+			    printf("ION ALPHA : %.20g, %.20g, %.20g, %.20g\n", ionoutc->alpha0, ionoutc->alpha1, ionoutc->alpha2, ionoutc->alpha3);
 		}
 		else if (strncmp(str+60, "ION BETA", 8)==0)
 		{
@@ -894,6 +896,8 @@ int readRinexNavAll(ephem_t eph[][MAX_SAT], ionoutc_t *ionoutc, const char *fnam
 			ionoutc->beta3 = atof(tmp);
 
 			flags |= 0x1<<1;
+			if (0)
+			    printf("ION BETA : %.20g, %.20g, %.20g, %.20g\n", ionoutc->beta0, ionoutc->beta1, ionoutc->beta2, ionoutc->beta3);
 		}
 		else if (strncmp(str+60, "DELTA-UTC", 9)==0)
 		{
@@ -1323,15 +1327,30 @@ void computeCodePhase(channel_t *chan, range_t rho1, double dt)
 	// Pseudorange rate.
 	rhorate = (rho1.range - chan->rho0.range)/dt;
 
+    if (0 && chan->prn == 6)
+    {
+        printf("%.3f\n", rho1.range);
+    }
+
 	// Carrier and code frequency.
+    //double pfcarr = chan->f_carr;
 	chan->f_carr = -rhorate/LAMBDA_L1;
-	chan->f_code = CODE_FREQ + chan->f_carr*CARR_TO_CODE;
+	chan->f_code = CODE_FREQ + (chan->f_carr+0)*CARR_TO_CODE;
+
+    //if (pfcarr == 0.0 || fabs(pfcarr - chan->f_carr) > 100)
+    //    fprintf(stderr, "PRN %02d : \t %g Hz\n", chan->prn, chan->f_carr);
+
 
 	// Initial code phase and data bit counters.
 	ms = ((subGpsTime(chan->rho0.g,chan->g0)+6.0) - chan->rho0.range/SPEED_OF_LIGHT)*1000.0;
 
 	ims = (int)ms;
 	chan->code_phase = (ms-(double)ims)*CA_SEQ_LEN; // in chip
+
+    if (0 && chan->prn == 6)
+    {
+        printf("%.3f;%.6f\n", rho1.g.sec, chan->code_phase);
+    }
 
 	chan->iword = ims/600; // 1 word = 30 bits = 600 ms
 	ims -= chan->iword*600;
