@@ -2056,6 +2056,13 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "F_SAMPLE = %d Hz \n", (int)samp_freq);
 	fprintf(stderr, "I_FREQ = %d Hz (MK-MOD!)\n", I_FREQ);
+
+	if (EPH_REFRESH_OFF)
+		fprintf(stderr, "EPH REFRESH OFF!!!\n");
+	else
+		fprintf(stderr, "EPH REFRESH ON\n");
+
+
 	fprintf(stderr, "Start time = %4d/%02d/%02d,%02d:%02d:%02.0f (%d:%.0f)\n", 
 		t0.y, t0.m, t0.d, t0.hh, t0.mm, t0.sec, g0.week, g0.sec);
 	fprintf(stderr, "Duration = %.1f [sec]\n", ((double)numd)/UPD_FREQ_MK);
@@ -2377,6 +2384,7 @@ int main(int argc, char *argv[])
 
 			// Refresh ephemeris and subframes
 			// Quick and dirty fix. Need more elegant way.
+			if(!EPH_REFRESH_OFF)
 			for (sv=0; sv<MAX_SAT; sv++)
 			{
 				if (eph[ieph+1][sv].vflg==1)
