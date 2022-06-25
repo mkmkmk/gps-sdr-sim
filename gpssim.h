@@ -73,6 +73,7 @@
 
 // Sampling data format
 #define SC01 (1)
+#define SC04 (4)
 #define SC08 (8)
 #define SC16 (16)
 

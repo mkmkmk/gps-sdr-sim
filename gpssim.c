@@ -1795,7 +1795,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'b':
 			data_format = atoi(optarg);
-			if (data_format!=SC01 && data_format!=SC08 && data_format!=SC16)
+			if (data_format!=SC01 && data_format!=SC08 && data_format!=SC16 && data_format!=SC04)
 			{
 				fprintf(stderr, "ERROR: Invalid I/Q data format.\n");
 				exit(1);
@@ -2091,6 +2091,14 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "ERROR: Faild to allocate compressed 1-bit I/Q buffer.\n");
 			exit(1);
 		}
+	}else if (data_format==SC04)
+	{
+		iq8_buff = calloc(iq_buff_size, 1);
+		if (iq8_buff==NULL)
+		{
+			fprintf(stderr, "ERROR: Faild to allocate 4-bit I/Q buffer.\n");
+			exit(1);
+		}
 	}
 
 	// Open output file
@@ -2270,6 +2278,13 @@ int main(int argc, char *argv[])
 
 			fwrite(iq8_buff, 1, iq_buff_size/4, fp);
 		}
+		else if (data_format==SC04)
+		{
+			for (isamp=0; isamp<2*iq_buff_size; isamp+=2)
+				iq8_buff[isamp/2] = ((iq_buff[isamp]>>8)& 0x0F) | ((iq_buff[isamp+1]>>4) & 0xF0 ); // 4b format
+
+			fwrite(iq8_buff, 1, iq_buff_size, fp);
+		} 
 		else if (data_format==SC08)
 		{
 			for (isamp=0; isamp<2*iq_buff_size; isamp++)
