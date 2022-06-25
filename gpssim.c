@@ -1711,6 +1711,7 @@ int main(int argc, char *argv[])
 	signed char *iq8_buff = NULL;
 
 	gpstime_t grx;
+
 	double delt;
 	int isamp;
 
@@ -1765,6 +1766,10 @@ int main(int argc, char *argv[])
 	duration = (double)iduration/UPD_FREQ_MK; // Default duration
 	verb = FALSE;
 	ionoutc.enable = TRUE;
+
+	double dbg_prev_code_phase = 0;
+	int dbg_prev_code_phase_int = 0;
+	int dbg_prev_code_phase_cnt = 0;
 
 	if (argc<3)
 	{
@@ -2264,6 +2269,37 @@ int main(int argc, char *argv[])
 					// Set currnt code chip
 					chan[i].codeCA = chan[i].ca[(int)chan[i].code_phase]*2-1;
 
+                    if (0 && chan[i].prn == 6)
+                    {
+                        double fsec = grx.sec + isamp * delt;
+                        double adt = chan[i].code_phase - dbg_prev_code_phase;
+                        int adti = ((int) chan[i].code_phase) - dbg_prev_code_phase_int;
+
+                        if (adti == 0)
+                            dbg_prev_code_phase_cnt++;
+                        else
+                        {
+                            if (1 && dbg_prev_code_phase_cnt != 3)
+                                printf("%.9f;%.6f;%.6f; %d; %d; %d\n", fsec, chan[i].code_phase, adt, (int) chan[i].code_phase, adti, dbg_prev_code_phase_cnt);
+                            dbg_prev_code_phase_cnt = 0;
+                        }
+
+                        if (0 && fsec >= 518400 + 18.3 && fsec <= 518400 + 18.9)
+                        {
+                            //if (fabs(adt) < 1)
+                            printf("%.9f;%.6f;%.6f; %d; %d; %d\n", fsec, chan[i].code_phase, adt, (int) chan[i].code_phase, adti, dbg_prev_code_phase_cnt);
+                            //adt = 0
+                        }
+                        if ((abs(adti) != 1022 && adti != 0 && adti != 1)
+                                || (dbg_prev_code_phase_cnt > 3))
+                        {
+                            //printf("errr!!\n");
+                            printf("%.9f;%.6f;%.6f; %d; %d; %d\n", fsec, chan[i].code_phase, adt, (int) chan[i].code_phase, adti, dbg_prev_code_phase_cnt);
+                        }
+                        dbg_prev_code_phase = chan[i].code_phase;
+                        dbg_prev_code_phase_int = (int) chan[i].code_phase;
+                    }
+
 					// Update carrier phase
 #ifdef FLOAT_CARR_PHASE
 					chan[i].carr_phase += (chan[i].f_carr + I_FREQ) * delt;
@@ -2310,11 +2346,14 @@ int main(int argc, char *argv[])
 		{
 			for (isamp=0; isamp<2*iq_buff_size; isamp++)
 				iq8_buff[isamp] = iq_buff[isamp]>>4; // 12-bit bladeRF -> 8-bit HackRF
-
+            if (0)
+                printf(" | iq = (%d, %d)                ", iq8_buff[0], iq8_buff[1]);
 			fwrite(iq8_buff, 1, 2*iq_buff_size, fp);
 		} 
 		else // data_format==SC16
 		{
+		    if (0)
+		        printf(" | iq = (%d, %d)                ", (int)(*(short*)(iq_buff+0)), (int)(*(short*)(iq_buff+2)));
 			fwrite(iq_buff, 2, 2*iq_buff_size, fp);
 		}
 
@@ -2369,8 +2408,8 @@ int main(int argc, char *argv[])
 				for (i=0; i<MAX_CHAN; i++)
 				{
 					if (chan[i].prn>0)
-						fprintf(stderr, "%02d %6.1f %5.1f %11.1f %5.1f\n", chan[i].prn,
-							chan[i].azel[0]*R2D, chan[i].azel[1]*R2D, chan[i].rho0.d, chan[i].rho0.iono_delay);
+						fprintf(stderr, "%02d %6.1f %5.1f %11.1f %5.1f %7d\n", chan[i].prn,
+							chan[i].azel[0]*R2D, chan[i].azel[1]*R2D, chan[i].rho0.d, chan[i].rho0.iono_delay, (int)chan[i].f_carr);
 				}
 			}
 		}
@@ -2379,7 +2418,8 @@ int main(int argc, char *argv[])
 		grx = incGpsTime(grx, 1.0 / UPD_FREQ_MK);
 
 		// Update time counter
-		fprintf(stderr, "\rTime into run = %4.1f", subGpsTime(grx, g0));
+        if (1)
+            fprintf(stderr, "\rTime into run = %4.1f", subGpsTime(grx, g0));
 		fflush(stdout);
 	}
 
