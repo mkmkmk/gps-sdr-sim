@@ -65,6 +65,10 @@
 #define SPEED_OF_LIGHT 2.99792458e8
 #define LAMBDA_L1 0.190293672798365
 
+
+// częstotliwość uaktualniania, chcę zmienić z domyślnych 10Hz na więcej
+#define UPD_FREQ_MK (1000)
+
 /*! \brief GPS L1 Carrier frequency */
 #define CARR_FREQ (1575.42e6)
 /*! \brief C/A code frequency */

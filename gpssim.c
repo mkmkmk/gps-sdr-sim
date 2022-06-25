@@ -1762,7 +1762,7 @@ int main(int argc, char *argv[])
 	data_format = SC16;
 	g0.week = -1; // Invalid start time
 	iduration = USER_MOTION_SIZE;
-	duration = (double)iduration/10.0; // Default duration
+	duration = (double)iduration/UPD_FREQ_MK; // Default duration
 	verb = FALSE;
 	ionoutc.enable = TRUE;
 
@@ -1885,17 +1885,18 @@ int main(int argc, char *argv[])
 		llh[2] = 10.0;
 	}
 
-	if (duration<0.0 || (duration>((double)USER_MOTION_SIZE)/10.0 && !staticLocationMode) || (duration>STATIC_MAX_DURATION && staticLocationMode))
+	if (duration<0.0 || (duration>((double)USER_MOTION_SIZE)/UPD_FREQ_MK && !staticLocationMode) || (duration>STATIC_MAX_DURATION && staticLocationMode))
 	{
 		fprintf(stderr, "ERROR: Invalid duration.\n");
 		exit(1);
 	}
-	iduration = (int)(duration*10.0 + 0.5);
+
+	iduration = (int)(duration*UPD_FREQ_MK + 0.5);
 
 	// Buffer size	
-	samp_freq = floor(samp_freq/10.0);
+	samp_freq = floor(samp_freq/UPD_FREQ_MK);
 	iq_buff_size = (int)samp_freq; // samples per 0.1sec
-	samp_freq *= 10.0;
+	samp_freq *= UPD_FREQ_MK;
 
 	delt = 1.0/samp_freq;
 
@@ -2050,7 +2051,7 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "Start time = %4d/%02d/%02d,%02d:%02d:%02.0f (%d:%.0f)\n", 
 		t0.y, t0.m, t0.d, t0.hh, t0.mm, t0.sec, g0.week, g0.sec);
-	fprintf(stderr, "Duration = %.1f [sec]\n", ((double)numd)/10.0);
+	fprintf(stderr, "Duration = %.1f [sec]\n", ((double)numd)/UPD_FREQ_MK);
 
 	// Select the current set of ephemerides
 	ieph = -1;
@@ -2171,7 +2172,7 @@ int main(int argc, char *argv[])
 	tstart = clock();
 
 	// Update receiver time
-	grx = incGpsTime(grx, 0.1);
+	grx = incGpsTime(grx, 1.0 / UPD_FREQ_MK);
 
 	for (iumd=1; iumd<numd; iumd++)
 	{
@@ -2193,7 +2194,7 @@ int main(int argc, char *argv[])
 				chan[i].azel[1] = rho.azel[1];
 
 				// Update code phase and data bit counters
-				computeCodePhase(&chan[i], rho, 0.1);
+				computeCodePhase(&chan[i], rho, 1.0 / UPD_FREQ_MK);
 #ifndef FLOAT_CARR_PHASE
 				chan[i].carr_phasestep = (int)round(512.0 * 65536.0 * chan[i].f_carr * delt);
 #endif
@@ -2320,9 +2321,9 @@ int main(int argc, char *argv[])
 		// Update navigation message and channel allocation every 30 seconds
 		//
 
-		igrx = (int)(grx.sec*10.0+0.5);
+		igrx = (int)(grx.sec*UPD_FREQ_MK+0.5);
 
-		if (igrx%300==0) // Every 30 seconds
+		if (igrx%(10*UPD_FREQ_MK)==10) // Every 30 seconds
 		{
 			// Update navigation message
 			for (i=0; i<MAX_CHAN; i++)
@@ -2374,7 +2375,7 @@ int main(int argc, char *argv[])
 		}
 
 		// Update receiver time
-		grx = incGpsTime(grx, 0.1);
+		grx = incGpsTime(grx, 1.0 / UPD_FREQ_MK);
 
 		// Update time counter
 		fprintf(stderr, "\rTime into run = %4.1f", subGpsTime(grx, g0));
