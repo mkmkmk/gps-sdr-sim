@@ -2373,9 +2373,9 @@ int main(int argc, char *argv[])
 		// Update navigation message and channel allocation every 30 seconds
 		//
 
-		igrx = (int)(grx.sec*UPD_FREQ_MK+0.5);
+		igrx = (int)(grx.sec*10+0.5);
 
-		if (igrx%(10*UPD_FREQ_MK)==10) // Every 30 seconds
+		if (igrx%300==0) // Every 30 seconds
 		{
 			// Update navigation message
 			for (i=0; i<MAX_CHAN; i++)

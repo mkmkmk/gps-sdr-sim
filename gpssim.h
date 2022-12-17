@@ -78,7 +78,7 @@
 #define I_FREQ (0)
 
 // częstotliwość uaktualniania, chcę zmienić z domyślnych 10Hz na więcej
-#define UPD_FREQ_MK (1000)
+#define UPD_FREQ_MK (10)
 
 // EPH REFRESH OFF - wyłącza uaktualnianie/zmianę efemeryd
 #define EPH_REFRESH_OFF (0)
